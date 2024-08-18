@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "CallFromAlert01": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7166"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 34228,
+      "useSSL": false
+    }
+  }
+}
