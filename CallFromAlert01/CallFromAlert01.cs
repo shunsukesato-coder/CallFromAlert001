@@ -23,26 +23,25 @@ namespace CallFromAlert01.Functions
 
             log.LogInformation("Received request body: {RequestBody}", requestBody);
 
-            // Request body を JSON として処理
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            // Request body を AlertData オブジェクトとしてデシリアライズ
+            AlertData data = JsonConvert.DeserializeObject<AlertData>(requestBody);
 
-            // JSON データからフィールドを抽出してログに出力
-            var severity = data?.data?.essentials?.severity;
-            var signalType = data?.data?.essentials?.signalType;
-            var monitoringService = data?.data?.essentials?.monitoringService;
-            var firedDateTime = data?.data?.essentials?.firedDateTime;
-            var description = data?.data?.essentials?.description;
-            var alertId = data?.data?.essentials?.alertId;
-            var alertCategory = data?.data?.alertContext?.AlertCategory;
-
-            log.LogInformation("Alert Details:\n" +
-                               $"重大度: {severity}\n" +
-                               $"Signal Type: {signalType}\n" +
-                               $"Monitoring Service: {monitoringService}\n" +
-                               $"発生日時: {firedDateTime}\n" +
-                               $"説明: {description}\n" +
-                               $"アラート ID: {alertId}\n" +
-                               $"アラートカテゴリー: {alertCategory}");
+            if (data != null)
+            {
+                // JSON データからフィールドを抽出してログに出力
+                log.LogInformation("Alert Details:\n" +
+                                   $"重大度: {data.data?.essentials?.severity}\n" +
+                                   $"Signal Type: {data.data?.essentials?.signalType}\n" +
+                                   $"Monitoring Service: {data.data?.essentials?.monitoringService}\n" +
+                                   $"発生日時: {data.data?.essentials?.firedDateTime}\n" +
+                                   $"説明: {data.data?.essentials?.description}\n" +
+                                   $"アラート ID: {data.data?.essentials?.alertId}\n" +
+                                   $"アラートカテゴリー: {data.data?.alertContext?.AlertCategory}");
+            }
+            else
+            {
+                log.LogWarning("Received request body could not be parsed.");
+            }
 
             return new OkObjectResult("Alert received successfully");
         }
