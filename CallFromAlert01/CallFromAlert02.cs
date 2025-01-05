@@ -5,10 +5,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CallFromAlert01
@@ -32,15 +29,11 @@ namespace CallFromAlert01
 
             if (data != null)
             {
-                // JSON データからフィールドを抽出してログに出力
-                log.LogInformation("Alert Details:\n" +
-                                   $"重大度: {data.data?.essentials?.severity}\n" +
-                                   $"Signal Type: {data.data?.essentials?.signalType}\n" +
-                                   $"Monitoring Service: {data.data?.essentials?.monitoringService}\n" +
-                                   $"発生日時: {data.data?.essentials?.firedDateTime}\n" +
-                                   $"説明: {data.data?.essentials?.description}\n" +
-                                   $"アラート ID: {data.data?.essentials?.alertId}\n" +
-                                   $"アラートカテゴリー: {data.data?.alertContext?.AlertCategory}");
+                // AlertData オブジェクト全体を JSON にシリアライズしてログに出力
+                string dataJson = JsonConvert.SerializeObject(data, Formatting.Indented);
+                log.LogInformation("Deserialized AlertData:
+{ AlertDataJson}
+                ", dataJson);
             }
             else
             {
@@ -49,5 +42,32 @@ namespace CallFromAlert01
 
             return new OkObjectResult("Alert received successfully");
         }
+    }
+
+    // AlertData クラスの定義を含めてください（既存のクラス構造をここに追加）
+    public class AlertData
+    {
+        public Data data { get; set; }
+    }
+
+    public class Data
+    {
+        public Essentials essentials { get; set; }
+        public AlertContext alertContext { get; set; }
+    }
+
+    public class Essentials
+    {
+        public string severity { get; set; }
+        public string signalType { get; set; }
+        public string monitoringService { get; set; }
+        public string firedDateTime { get; set; }
+        public string description { get; set; }
+        public string alertId { get; set; }
+    }
+
+    public class AlertContext
+    {
+        public string AlertCategory { get; set; }
     }
 }
